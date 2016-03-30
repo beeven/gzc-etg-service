@@ -47,8 +47,9 @@ class CompanyDataSource {
         });
     }
     getCompanyData(companyId) {
-        var queryStr ='select [FULL_NAME],[COP_GB_CODE],[TRADE_CO],[CONTAC_CO],[TEL_CO],[CUSTOMS_CODE] from [RiskH2000].[risk].[COMPANY_REL] where [RiskH2000].[risk].[COMPANY_REL].TRADE_CO = @Id';
-        var request = new sql.Request(this.connection);
+//        var queryStr ='select [FULL_NAME],[COP_GB_CODE],[TRADE_CO],[CONTAC_CO],[TEL_CO],[CUSTOMS_CODE] from [RiskH2000].[risk].[COMPANY_REL] where [RiskH2000].[risk].[COMPANY_REL].TRADE_CO = @Id';
+        var queryStr ='select [FULL_NAME],[COP_GB_CODE],[TRADE_CO],[CONTAC_CO],[TEL_CO],[CUSTOMS_CODE],[ADDR_CO],[LAW_MAN],[LAW_MAN_TEL] from [RiskH2000].[risk].[COMPANY_REL] where [RiskH2000].[risk].[COMPANY_REL].TRADE_CO = @Id';
+      var request = new sql.Request(this.connection);
         request.input('Id',companyId);
         return request.query(queryStr).then(function(recordset){
             return recordset[0];

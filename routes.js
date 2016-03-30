@@ -42,6 +42,8 @@ router.get("/goods/query/:keyword",function(req,res){
     var pageSize = req.query.pageSize || 20;
     var pageNumber = req.query.pageNumber || 1;
     var keyword = req.params.keyword;
+    keyword = decodeURIComponent(keyword);
+        console.log(keyword, pageSize,pageNumber);
     goodsDS.getGoodsData(keyword, pageSize, pageNumber).then(function(data){
         if(data.length > 0) {
             res.json({code:0, data:data});

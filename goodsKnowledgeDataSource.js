@@ -19,30 +19,28 @@ var config = {
 
 var goodsPagingQueryString = `
 with Goods_cte as (
-    select GOODS_ID, G_NAME,G_MODEL, CODE_TS, SUBSTRING(GOODS_DESC,1,30) as GOODS_DESC, GOODS_ORDER_NO
-    from GENERAL_GOODS_INFO
-    where IS_PUBLISH = 1
-        and (
-            CODE_TS like '%'+@keyword+'%' 
-            or G_NAME like '%'+@keyword + '%'
-        )
+     select GOODS_ID, G_NAME, CODE_TS, SUBSTRING(GOODS_DESC,1,50) as GOODS_DESC, GOODS_ORDER_NO
+     from GENERAL_GOODS_INFO
+     where IS_PUBLISH = 1 and (
+           CODE_TS like '%'+@keyword+'%' 
+           or G_NAME like '%'+@keyword + '%'
+           )
 )
 
-select GOODS_ID, G_NAME, CODE_TS, GOODS_DESC
-from (
-    select ROW_NUMBER() OVER(ORDER BY GOODS_ORDER_NO,CODE_TS) AS NUMBER, GOODS_ID, G_NAME,G_MODEL, CODE_TS, GOODS_DESC, GOODS_ORDER_NO,
-           tCountGoods.CountGoods as TotalRows
+select * from (
+    select ROW_NUMBER() OVER(ORDER BY GOODS_ORDER_NO,CODE_TS) AS NUMBER, GOODS_ID, G_NAME, CODE_TS, GOODS_DESC,GOODS_ORDER_NO,
+    tCountGoods.CountGoods as TOTAL_ROWS
     from Goods_cte
     cross join (select count(*) as CountGoods from Goods_cte) as tCountGoods
 ) AS TBL
 where NUMBER BETWEEN((@pageNumber-1)*@pageSize+1) AND (@pageNumber*@pageSize)
-    order by NUMBER
+order by NUMBER
 `;
 
 var goodsDetailQueryString = `
 select G_NAME,CODE_TS,GOODS_DESC from GENERAL_GOODS_INFO where GOODS_ID = @goodsId;
 select THUMBNAIL, TITLE, FILE_ID from GENERAL_GOODS_PIC where GOODS_ID = @goodsId;
-select LOW_RATE, COMPLEX.TAX_RATE, REG_RATE, OUT_RATE, OUT_TAXRATE.TAX_RATE as RETURN_RATE, HS_POINTS
+select LOW_RATE, COMPLEX.TAX_RATE, REG_RATE, OUT_RATE,CONTROL_MARK, OUT_TAXRATE.TAX_RATE as RETURN_RATE, HS_POINTS
 from COMPLEX 
 join GENERAL_GOODS_INFO on GENERAL_GOODS_INFO.CODE_TS = COMPLEX.CODE_TS
 left join DECLARE_STANDARD on DECLARE_STANDARD.HS_CODE = GENERAL_GOODS_INFO.CODE_TS

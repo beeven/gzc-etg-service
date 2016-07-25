@@ -8,7 +8,7 @@ var CompanyDataSource = require("./companyDataSource"),
     goodsDS = new GoodsKnowledgeDataSource();
 
 
-router.get("/company/:companyId",function(req,res){
+router.get("/company/getById/:companyId",function(req,res){
     companyDS.getCompanyData(req.params.companyId)
         .then(function(data){
             if(typeof(data) === 'undefined') {
@@ -23,8 +23,39 @@ router.get("/company/:companyId",function(req,res){
         });
 });
 
-router.get("/companyByOrgCo/:orgCo",function(req,res){
-    companyDS.getCompayDataByOrgCo(req.params.orgCo)
+router.get("/company/getByOrgCo/:orgCo",function(req,res){
+    companyDS.getCompanyDataByOrgCo(req.params.orgCo)
+        .then(function(data){
+            if(typeof(data) === 'undefined') {
+                res.status(200).end();
+            } else {
+                res.status(200).json(data);
+            }
+        })
+        .catch(function(err){
+            res.status(500).end();
+            console.error(err);
+        });
+});
+router.get("/company/getBySCC/:scc",function(req,res){
+    companyDS.getCompanyDataBySCC(req.params.scc)
+        .then(function(data){
+            if(typeof(data) === 'undefined') {
+                res.status(200).end();
+            } else {
+                res.status(200).json(data);
+            }
+        })
+        .catch(function(err){
+            res.status(500).end();
+            console.error(err);
+        });
+});
+
+
+
+router.get("/company/getAllData/:companyId",function(req,res){
+    companyDS.getCompanyAllData(req.params.companyId)
         .then(function(data){
             if(typeof(data) === 'undefined') {
                 res.status(200).end();
@@ -81,6 +112,14 @@ router.get("/goods/photo/:fileId",function(req,res) {
         console.error(err);
         res.status(500).end();
     });
+});
+
+router.get("/diagnostic/echo",function(req,res){
+    res.end("echo");
+});
+
+router.get("/diagnostic/now",function(req,res){
+    res.end((new Date()).toISOString());
 });
 
 
